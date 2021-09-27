@@ -27,7 +27,7 @@ module.exports = {
     get_groups: function(req, res){
         Group.find().exec(function(err, groups){
             if (err) {
-                res.json({state:false, status: 400, message: 'no groups created yet!});
+                res.json({state:false, status: 400, message: 'no groups created yet!'});
             } else {
                 res.json({state:true, status: 200, data: groups, message: 'all groups!'});
             }

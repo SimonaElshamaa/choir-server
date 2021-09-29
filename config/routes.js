@@ -23,6 +23,7 @@ module.exports = function (app) {
 	app.post('/api/users/auth', authController.auth);
 	app.post('/api/users/register', authController.register);
 	app.get('/api/users/get_user/:id', protectAPI, authController.get_user);
+	app.post('/api/users/add_user', authController.add_user);
 	app.get('/api/users/get_group_users/:group_id', protectAPI, authController.get_group_users);
 	app.get('/api/users/search/:name/:group_id', protectAPI, authController.search);
 

@@ -68,20 +68,20 @@ module.exports = {
         signupAttributes = {
             email: req.body.email,
             password: req.body.password,
-            full_name: req.body.full_name,
+            fullName: req.body.fullName,
             mobile: req.body.mobile,
             address:req.body.address,
-            date_of_birth: req.body.date_of_birth,
+            dateBfBirth: req.body.dateOfBirth,
             image: req.body.image,
             note: req.body.note,
-            confession_priest: req.body.confession_priest,
+            confessionPriest: req.body.confessionPriest,
             church: req.body.church,
-            father_mobile_number :req.body.father_mobile_number,
-            mother_mobile_number :req.body.mother_mobile_number,
-            father_confession_priest: req.body.father_confession_priest,
-            mother_confession_priest:req.body.mother_confession_priest,
-            father_job: req.body.father_job,
-            mother_job: req.body.mother_job,
+            fatherMobileNumber :req.body.fatherMobileNumber,
+            motherMobileNumber :req.body.motherMobileNumber,
+            fatherConfessionPriest: req.body.fatherConfessionPriest,
+            motherConfessionPriest:req.body.motherConfessionPriest,
+            fatherJob: req.body.fatherJob,
+            motherJob: req.body.motherJob,
         };
         var newUser = new User(signupAttributes);
 
@@ -108,6 +108,74 @@ module.exports = {
             }
         });
     },
+    add_user: function (req, res) {     
+        //validating password
+        //validating email
+        console.log('hello', req.body);
+        req.checkBody('email', 'Email is required').notEmpty();
+        req.checkBody('fullName', 'fullName is required').notEmpty();
+        req.checkBody('mobile', 'mobile is required').notEmpty();
+
+
+        req.sanitizeBody('fullName').escape();
+        req.sanitizeBody('fullName').trim();
+
+        req.sanitizeBody('password').escape();
+        req.sanitizeBody('password').trim();
+        
+        
+
+        var errors = req.validationErrors();
+        if (errors) {
+            res.status(400).json({
+                status: false,
+                message: errors
+            });
+            return;
+        }
+        
+        var signupAttributes;
+        signupAttributes = {
+            email: req.body.email,
+            password: req.body.password,
+            fullName: req.body.fullName,
+            mobile: req.body.mobile,
+            address:req.body.address,
+            dateBfBirth: req.body.dateOfBirth,
+            image: req.body.image,
+            note: req.body.note,
+            confessionPriest: req.body.confessionPriest,
+            church: req.body.church,
+            fatherMobileNumber :req.body.fatherMobileNumber,
+            motherMobileNumber :req.body.motherMobileNumber,
+            fatherConfessionPriest: req.body.fatherConfessionPriest,
+            motherConfessionPriest:req.body.motherConfessionPriest,
+            fatherJob: req.body.fatherJob,
+            motherJob: req.body.motherJob,
+        };
+        var newUser = new User(signupAttributes);
+
+        newUser.save(function (err) {
+            if (err) {
+                var message = err
+                if(err.code == 11000)
+                    message = "This email is registered with another account!"
+                res.json({state:false, status: 400, message: message});
+                return;
+            }
+
+            if (req.body.file_bytes) {
+                newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
+                    newUser.image = image_path;
+                    newUser.save();
+                    res.json({state:true, status: 200, message: 'User Added', data:newUser});
+                });
+            }
+            else{
+                res.json({state:true, status: 200, message: 'User Added', data:newUser});
+            }
+        });
+    },
     get_user:function(req,res){
         console.log('req.params',req.params);
         User.findOne({_id: req.params.id}).populate('user').exec(function (err, user) {
@@ -119,8 +187,8 @@ module.exports = {
         });  
     },
     search:function(req,res){//search by name
-        console.log('req.params.name',req.params.name)
-        User.find({full_name: req.params.name, group_id: req.params.group_id}).exec(function (err, users) {
+        console.log('req.params.name',req.params.fullName)
+        User.find({fullName: req.params.fullName, groupId: req.params.groupId}).exec(function (err, users) {
             if (err)
             res.json({state:false, status: 400, message:err});
             else{
@@ -129,7 +197,7 @@ module.exports = {
         });  
     },
     get_group_users:function(req,res){
-        User.find({group: req.params.group_id}).exec(function(err, users){
+        User.find({group: req.params.groupId}).exec(function(err, users){
             if (err) {
                 res.json({state:false, status: 400, message: 'this groups hasn\'nt any member yet!'});
             } else {

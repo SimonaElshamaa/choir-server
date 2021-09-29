@@ -14,20 +14,20 @@ var userSchema = new schema({
         unique: true
     },
     password:{type: String},
-    full_name: {type: String},
+    fullName: {type: String},
     address: {type: String},
     mobile:{type: Number},
-    date_of_birth: Date,
+    dateOfBirth: Date,
     image: {type: String},
     note: {type: String},
-    confession_priest: {type: String},
+    confessionPriest: {type: String},
     church: {type: String},
-    father_mobile_number :{type: Number},
-    mother_mobile_number :{type: Number},
-    father_confession_priest: {type: String},
-    mother_confession_priest: {type: String},
-    father_job: {type: String},
-    mother_job: {type: String},
+    fatherMobileNumber :{type: Number},
+    motherMobileNumber :{type: Number},
+    fatherConfessionPriest: {type: String},
+    motherConfessionPriest: {type: String},
+    fatherJob: {type: String},
+    motherJob: {type: String},
     sisters:[{
         name:{type: String},
         age:{type:Number}
@@ -36,10 +36,10 @@ var userSchema = new schema({
         name:{type: String},
         age:{type:Number}
     }],
-    group_id: [{type: mongoose.Schema.Types.ObjectId,ref: 'group'}],
-    role_ids: [{type: mongoose.Schema.Types.ObjectId,ref: 'role'}],
-    created_at: Date,
-    updated_at: Date,
+    groupId: [{type: mongoose.Schema.Types.ObjectId,ref: 'group'}],
+    roleIds: [{type: mongoose.Schema.Types.ObjectId,ref: 'role'}],
+    createdAt: Date,
+    updatedAt: Date,
 });
 
 

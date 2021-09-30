@@ -140,6 +140,7 @@ module.exports = {
             password: req.body.password,
             fullName: req.body.fullName,
             mobile: req.body.mobile,
+            groupId: req.body.groupId,
             address:req.body.address,
             dateBfBirth: req.body.dateOfBirth,
             image: req.body.image,

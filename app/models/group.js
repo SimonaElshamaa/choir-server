@@ -4,8 +4,12 @@ var timestamps = require('goodeggs-mongoose-timestamps');
 var schema = mongoose.Schema;
 
 var groupSchema = new schema({
-    id: {type: String},
-    name:{type:String}
+    Identifier:{
+        type: Number,
+        required: true,
+        unique: true
+    },
+    name:{type:String},
 });
 
 groupSchema.plugin(timestamps);

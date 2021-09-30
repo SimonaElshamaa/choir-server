@@ -3,25 +3,31 @@ var Group = require('../models/group');
 module.exports = {
 
 	add_group: function (req, res) {
-        var new_group = {
-            name:req.body.name
-        };
-        var newGroup = new Group(new_group);
-        newGroup.save(function (err) {
+        Group.countDocuments({}, function(err, count) {
             if (err) {
                 var message = err
                 res.json({state:false, status: 400, message: message});
                 return;
             }
-
-                res.json({
-                    state:true,
-                    status: 200,
-                    data: newGroup, 
-                    message: 'group is created successfully'
-                });
+            var counter = ++count;
+            var groupAttributes;
             
-        });  		
+            groupAttributes = {
+                Identifier :counter,
+                name: req.body.name
+            };
+            
+            var newGroup = new Group(groupAttributes);
+
+            newGroup.save(function (err) {
+                if (err) {
+                    var message = err
+                    res.json({state:false, status: 400, message: message});
+                    return;
+                }
+                res.json({state:true, status: 200, message: 'Group Added', data:newGroup});
+            });		
+        });
     },
     
     get_groups: function(req, res){

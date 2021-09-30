@@ -5,8 +5,8 @@ module.exports = {
 	add_attendance: function (req, res) {
         var new_attendance = {
             date:req.body.date,
-            user_id:req.body.user_id,
-            group_id:req.body.group_id,
+            userId:req.body.userId,
+            groupId:req.body.groupId,
             attend:req.body.attend,
             note: req.body.note
         };
@@ -29,13 +29,13 @@ module.exports = {
     },
     
     get_group_attendance_by_date: function(req, res){
-        const group_id = req.body.group_id;
+        const groupId = req.body.groupId;
         const date = req.body.date;
-        Attendence.find({group_id, date}).exec(function(err, attendances){
+        Attendence.find({groupId, date}).exec(function(err, attendances){
             if (err) {
-                res.json({state:false, status: 400, message: 'this doctor doesn\'t create any clinics yet!'});
+                res.json({state:false, status: 400, message: 'no groups created yet!'});
             } else {
-                res.json({state:true, status: 200, data: attendances, message: 'all groups!'});
+                res.json({state:true, status: 204, data: attendances, message: 'all groups!'});
             }
         });
     }    

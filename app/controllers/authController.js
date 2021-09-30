@@ -32,7 +32,7 @@ module.exports = {
                 var token = jwt.sign({"user": user}, process.env.SECRET, {expiresIn: 60*60*24});
                 return res.json({
                     state: true,
-                    success: 200,
+                    success: 204,
                     message: 'Welcome back!',
                     data: user,
                     token:token
@@ -100,11 +100,11 @@ module.exports = {
                 newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
                     newUser.image = image_path;
                     newUser.save();
-                    res.json({state:true, status: 200, message: 'User Added', data:newUser, token:token});
+                    res.json({state:true, status: 204, message: 'User Added', data:newUser, token:token});
                 });
             }
             else{
-                res.json({state:true, status: 200, message: 'User Added', data:newUser, token:token});
+                res.json({state:true, status: 204, message: 'User Added', data:newUser, token:token});
             }
         });
     },
@@ -129,7 +129,8 @@ module.exports = {
         if (errors) {
             res.status(400).json({
                 status: false,
-                message: errors
+                type:"Validation error",
+                details: errors
             });
             return;
         }
@@ -161,7 +162,7 @@ module.exports = {
                 var message = err
                 if(err.code == 11000)
                     message = "This email is registered with another account!"
-                res.json({state:false, status: 400, message: message});
+                res.json({state:false, status: 400,type:"duplicate field", details: message});
                 return;
             }
 
@@ -169,11 +170,11 @@ module.exports = {
                 newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
                     newUser.image = image_path;
                     newUser.save();
-                    res.json({state:true, status: 200, message: 'User Added', data:newUser});
+                    res.json({state:true, status: 204, message: 'User Added', body:newUser});
                 });
             }
             else{
-                res.json({state:true, status: 200, message: 'User Added', data:newUser});
+                res.json({state:true, status: 204, message: 'User Added', body:newUser});
             }
         });
     },
@@ -183,17 +184,17 @@ module.exports = {
             if (err){
                 res.json({state:false, status: 400, message: err})
             }else{
-                res.json({state:true, status: 200, data: user})
+                res.json({state:true, status: 204, data: user})
             }
         });  
     },
     search:function(req,res){//search by name
         console.log('req.params.name',req.params.fullName)
-        User.find({fullName: req.params.fullName, groupId: req.params.groupId}).exec(function (err, users) {
+        User.find({fullName: req.params.name, groupId: req.params.groupId}).exec(function (err, users) {
             if (err)
             res.json({state:false, status: 400, message:err});
             else{
-                res.json({state:true, status: 200, data: users})
+                res.json({state:true, status: 204, data: users})
             }
         });  
     },
@@ -202,7 +203,7 @@ module.exports = {
             if (err) {
                 res.json({state:false, status: 400, message: 'this groups hasn\'nt any member yet!'});
             } else {
-                res.json({state:true, status: 200, data: users, message: 'all groups!'});
+                res.json({state:true, status: 204, data: users, message: 'all groups!'});
             }
         })
     }

@@ -4,7 +4,7 @@ var timestamps = require('goodeggs-mongoose-timestamps');
 var schema = mongoose.Schema;
 
 var groupSchema = new schema({
-    Identifier:{
+    identifier:{
         type: Number,
         required: true,
         unique: true

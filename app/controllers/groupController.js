@@ -25,7 +25,7 @@ module.exports = {
                     res.json({state:false, status: 400, message: message});
                     return;
                 }
-                res.json({state:true, status: 200, message: 'Group Added', data:newGroup});
+                res.json({state:true, status: 204, message: 'Group Added', data:newGroup});
             });		
         });
     },
@@ -35,7 +35,7 @@ module.exports = {
             if (err) {
                 res.json({state:false, status: 400, message: 'no groups created yet!'});
             } else {
-                res.json({state:true, status: 200, data: groups, message: 'all groups!'});
+                res.json({state:true, status: 204, data: groups, message: 'all groups!'});
             }
         });
     }    

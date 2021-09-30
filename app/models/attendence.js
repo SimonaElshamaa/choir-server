@@ -6,8 +6,8 @@ var schema = mongoose.Schema;
 var attendenceSchema = new schema({
     id: {type: String},
     date:Date,
-    user_id:{ type: schema.Types.ObjectId, ref: 'member' },
-    group_id:{ type: schema.Types.ObjectId, ref: 'group' },
+    userId:{ type: schema.Types.ObjectId, ref: 'user' },
+    groupId:{ type: Number },
     attend:{type: Boolean},
     note :{type:String},
     created_at: Date,

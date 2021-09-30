@@ -36,7 +36,7 @@ var userSchema = new schema({
         name:{type: String},
         age:{type:Number}
     }],
-    groupId: [{type: mongoose.Schema.Types.ObjectId,ref: 'group'}],
+    groupId: { type: Number },
     roleIds: [{type: mongoose.Schema.Types.ObjectId,ref: 'role'}],
     createdAt: Date,
     updatedAt: Date,

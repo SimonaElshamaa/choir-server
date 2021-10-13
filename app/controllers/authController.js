@@ -19,15 +19,14 @@ module.exports = {
 
         var errors = req.validationErrors();
         if (errors) {
-            console.log(errors);
-            res.json({state:false, success: 400, message: 'Please enter correct email and password'});
+            res.json({status: 422, title:'Validation Error', type:'Validation Error',details: 'Please enter correct email and password'});
             return;
         }
         User.findOne({email: req.body.email}).exec(function (err, user) {
             if (err) 
                 throw err;
             if (!user) {
-                return res.json({state: false, status:400, message: 'Authentication failed.'});
+                return res.json({state: false, status:422, details: 'Authentication failed.', title:'Authentication failed', type:'Authentication Error.'});
             } else {
                 var token = jwt.sign({"user": user}, process.env.SECRET, {expiresIn: 60*60*24});
                 return res.json({
@@ -57,9 +56,11 @@ module.exports = {
 
         var errors = req.validationErrors();
         if (errors) {
-            res.status(400).json({
-                status: false,
-                message: errors
+            res.status(422).json({
+                status:422,
+                title:'Validation Error',
+                details:errors,
+                type:'Validation Error'
             });
             return;
         }
@@ -92,7 +93,7 @@ module.exports = {
                 var message = err
                 if(err.code == 11000)
                     message = "This email is registered with another account!"
-                res.json({state:false, status: 400, message: message});
+                res.json({status:422,title:'Validation Error',type:"duplicate Field", details:message});
                 return;
             }
 
@@ -100,18 +101,17 @@ module.exports = {
                 newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
                     newUser.image = image_path;
                     newUser.save();
-                    res.json({state:true, status: 204, message: 'User Added', data:newUser, token:token});
+                    res.json({  status: 204, title: 'User Added', data:newUser, token:token});
                 });
             }
             else{
-                res.json({state:true, status: 204, message: 'User Added', data:newUser, token:token});
+                res.json({  status: 204, data:{ data:newUser}});
             }
         });
     },
     add_user: function (req, res) {     
         //validating password
         //validating email
-        console.log('hello', req.body);
         req.checkBody('email', 'Email is required').notEmpty();
         req.checkBody('fullName', 'fullName is required').notEmpty();
         req.checkBody('mobile', 'mobile is required').notEmpty();
@@ -127,9 +127,10 @@ module.exports = {
 
         var errors = req.validationErrors();
         if (errors) {
-            res.status(400).json({
-                status: false,
-                type:"Validation error",
+            res.status(422).json({
+                status:422,
+                title:'input validation',
+                type:'Validation error',
                 details: errors
             });
             return;
@@ -162,7 +163,7 @@ module.exports = {
                 var message = err
                 if(err.code == 11000)
                     message = "This email is registered with another account!"
-                res.json({state:false, status: 400,type:"duplicate field", details: message});
+                res.json({status:500,title:'Server Error', type:"duplicate field", details: message});
                 return;
             }
 
@@ -170,11 +171,11 @@ module.exports = {
                 newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
                     newUser.image = image_path;
                     newUser.save();
-                    res.json({state:true, status: 204, message: 'User Added', body:newUser});
+                    res.json({ status: 204, body:newUser});
                 });
             }
             else{
-                res.json({state:true, status: 204, message: 'User Added', body:newUser});
+                res.json({ status: 204, data:newUser});
             }
         });
     },
@@ -182,9 +183,9 @@ module.exports = {
         console.log('req.params',req.params);
         User.findOne({_id: req.params.id}).populate('user').exec(function (err, user) {
             if (err){
-                res.json({state:false, status: 400, message: err})
+                res.json({status:500, title:'Server Error',type:"Server Error", details:err})
             }else{
-                res.json({state:true, status: 204, data: user})
+                res.json({  status: 204, data: user})
             }
         });  
     },
@@ -192,18 +193,23 @@ module.exports = {
         console.log('req.params.name',req.params.fullName)
         User.find({fullName: req.params.name, groupId: req.params.groupId}).exec(function (err, users) {
             if (err)
-            res.json({state:false, status: 400, message:err});
+            res.json({status:500,  title:'Server Error', type:"Server Error", details:err});
             else{
-                res.json({state:true, status: 204, data: users})
+                res.json({ status: 204, data: users})
             }
         });  
     },
     get_group_users:function(req,res){
         User.find({group: req.params.groupId}).exec(function(err, users){
             if (err) {
-                res.json({state:false, status: 400, message: 'this groups hasn\'nt any member yet!'});
+                res.json({  
+                status:422,
+                type:"No Items",
+                title:"No Item Found",
+                details: 'this groups hasn\'nt any member yet!'
+            });
             } else {
-                res.json({state:true, status: 204, data: users, message: 'all groups!'});
+                res.json({ status: 204, data: users, message: 'all users!'});
             }
         })
     }

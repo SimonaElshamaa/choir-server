@@ -26,7 +26,7 @@ module.exports = function (app) {
 	app.post('/api/users/register', authController.register);
 	app.get('/api/users/get_user/:id', authController.get_user);
 	app.post('/api/users/add_user', authController.add_user);
-	app.get('/api/users/get_group_users/:group_id', authController.get_group_users);
+	app.get('/api/users/get_group_users/:groupId', authController.get_group_users);
 	app.get('/api/users/search/:name/:group_id', authController.search);
 
 	app.post('/api/groups/add_group', groupController.add_group );

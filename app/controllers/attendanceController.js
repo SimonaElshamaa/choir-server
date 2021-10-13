@@ -14,7 +14,7 @@ module.exports = {
         newAttendanceRecord.save(function (err) {
             if (err) {
                 var message = err
-                res.json({state:false, status: 400, message: message});
+                res.json({status: 422, title: message, type:"Error",details:message});
                 return;
             }
 
@@ -33,7 +33,7 @@ module.exports = {
         const date = req.body.date;
         Attendence.find({groupId, date}).exec(function(err, attendances){
             if (err) {
-                res.json({state:false, status: 400, message: 'no groups created yet!'});
+                res.json({status: 422, title: 'no groups created yet!', type:'Server Error', details:err});
             } else {
                 res.json({state:true, status: 204, data: attendances, message: 'all groups!'});
             }

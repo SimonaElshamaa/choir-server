@@ -22,7 +22,7 @@ module.exports = {
             newGroup.save(function (err) {
                 if (err) {
                     var message = err
-                    res.json({state:false, status: 400, message: message});
+                    res.json({status: 422, title:'Server Error', type:'Server Error', message: message});
                     return;
                 }
                 res.json({state:true, status: 204, message: 'Group Added', data:newGroup});
@@ -33,7 +33,7 @@ module.exports = {
     get_groups: function(req, res){
         Group.find().exec(function(err, groups){
             if (err) {
-                res.json({state:false, status: 400, message: 'no groups created yet!'});
+                res.json({ status: 422,title:'Server Error', type:'Server Error', message: err});
             } else {
                 res.json({state:true, status: 204, data: groups, message: 'all groups!'});
             }

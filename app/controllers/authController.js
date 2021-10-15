@@ -115,6 +115,7 @@ module.exports = {
         req.checkBody('email', 'Email is required').notEmpty();
         req.checkBody('fullName', 'fullName is required').notEmpty();
         req.checkBody('mobile', 'mobile is required').notEmpty();
+        req.checkBody('groupId', 'Member should be added to group').notEmpty();
 
 
         req.sanitizeBody('fullName').escape();
@@ -200,7 +201,7 @@ module.exports = {
         });  
     },
     get_group_users:function(req,res){
-        User.find({group: req.params.groupId}).exec(function(err, users){
+        User.find({groupId: parseInt(req.params.groupId)}).exec(function(err, users){
             if (err) {
                 res.json({  
                 status:422,

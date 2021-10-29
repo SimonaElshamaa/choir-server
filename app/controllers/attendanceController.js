@@ -30,8 +30,12 @@ module.exports = {
     
     get_group_attendance_by_date: function(req, res){
         const groupId = req.params.groupId;
-        const date = req.params.date;
-        Attendence.find({groupId, date}).exec(function(err, attendances){
+        const today = req.params.today;
+        const tomorrow = req.params.tomorrow;
+        Attendence.find({groupId:groupId, date:{
+                $gte: new Date(today), 
+                $lt: new Date(tomorrow)
+        }}).exec(function(err, attendances){
             if (err) {
                 res.json({status: 422, title: 'no groups created yet!', type:'Server Error', details:err});
             } else {

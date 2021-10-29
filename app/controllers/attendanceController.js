@@ -4,7 +4,7 @@ module.exports = {
 
 	add_attendance: function (req, res) {
         var new_attendance = {
-            date:req.body.date,
+            date:new Date(req.body.date),
             userId:req.body.userId,
             groupId:req.body.groupId,
             attend:req.body.attend,
@@ -20,7 +20,7 @@ module.exports = {
 
                 res.json({
                     state:true,
-                    status: 200,
+                    status: 204,
                     data: newAttendanceRecord, 
                     message: 'attendance is created successfully'
                 });
@@ -29,8 +29,8 @@ module.exports = {
     },
     
     get_group_attendance_by_date: function(req, res){
-        const groupId = req.body.groupId;
-        const date = req.body.date;
+        const groupId = req.params.groupId;
+        const date = req.params.date;
         Attendence.find({groupId, date}).exec(function(err, attendances){
             if (err) {
                 res.json({status: 422, title: 'no groups created yet!', type:'Server Error', details:err});

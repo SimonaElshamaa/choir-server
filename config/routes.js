@@ -32,6 +32,6 @@ module.exports = function (app) {
 	app.post('/api/groups/add_group', groupController.add_group );
 	app.get('/api/groups/get_groups', groupController.get_groups );
 
-	app.post('/api/attendance/add_attendance', attendanceController.add_attendance );
-	app.get('/api/attendance/get_group_attendance_by_date', attendanceController.get_group_attendance_by_date );
+	app.post('/api/attendances/add_attendance', attendanceController.add_attendance );
+	app.get('/api/attendances/get_group_attendance_by_date/:groupId/:date', attendanceController.get_group_attendance_by_date );
 };

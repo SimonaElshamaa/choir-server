@@ -69,7 +69,7 @@ module.exports = {
         signupAttributes = {
             email: req.body.email,
             password: req.body.password,
-            fullName: req.body.fullName,
+            fullName: req.params.fullName.charAt(0).toUpperCase() + req.params.fullName.slice(1),
             mobile: req.body.mobile,
             address:req.body.address,
             dateBfBirth: req.body.dateOfBirth,
@@ -136,12 +136,11 @@ module.exports = {
             });
             return;
         }
-        
         var signupAttributes;
         signupAttributes = {
             email: req.body.email,
             password: req.body.password,
-            fullName: req.body.fullName,
+            fullName: req.body.fullName.charAt(0).toUpperCase() + req.body.fullName.slice(1).toLowerCase(),
             mobile: req.body.mobile,
             groupId: req.body.groupId,
             address:req.body.address,
@@ -191,8 +190,8 @@ module.exports = {
         });  
     },
     search:function(req,res){//search by name
-        console.log('req.params.name',req.params.fullName)
-        User.find({fullName: req.params.name, groupId: req.params.groupId}).exec(function (err, users) {
+        const FullName = req.params.name.charAt(0).toUpperCase() + req.params.name.slice(1).toLowerCase();
+        User.find({fullName: FullName, groupId:parseInt( req.params.groupId)}).exec(function (err, users) {
             if (err)
             res.json({status:500,  title:'Server Error', type:"Server Error", details:err});
             else{

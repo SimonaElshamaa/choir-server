@@ -6,7 +6,7 @@ module.exports = {
         Group.countDocuments({}, function(err, count) {
             if (err) {
                 var message = err
-                res.json({state:false, status: 400, message: message});
+                res.status(400).json({state:false, message: message});
                 return;
             }
             var counter = ++count;
@@ -22,10 +22,10 @@ module.exports = {
             newGroup.save(function (err) {
                 if (err) {
                     var message = err
-                    res.json({status: 422, title:'Server Error', type:'Server Error', message: message});
+                    res.status(422).json({title:'Server Error', type:'Server Error', message: message});
                     return;
                 }
-                res.json({state:true, status: 204, message: 'Group Added', data:newGroup});
+                res.json({state:true, message: 'Group Added', data:newGroup});
             });		
         });
     },
@@ -33,9 +33,9 @@ module.exports = {
     get_groups: function(req, res){
         Group.find().exec(function(err, groups){
             if (err) {
-                res.json({ status: 422,title:'Server Error', type:'Server Error', message: err});
+                res.status(422).json({title:'Server Error', type:'Server Error', message: err});
             } else {
-                res.json({state:true, status: 204, data: groups, message: 'all groups!'});
+                res.json({state:true, data: groups, message: 'all groups!'});
             }
         });
     }    

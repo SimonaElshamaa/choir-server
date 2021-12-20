@@ -19,14 +19,14 @@ module.exports = {
 
         var errors = req.validationErrors();
         if (errors) {
-            res.json({status: 422, title:'Validation Error', type:'Validation Error',details: 'Please enter correct email and password'});
+            res.status(422).json({title:'Validation Error', type:'Validation Error',details: 'Please enter correct email and password'});
             return;
         }
         User.findOne({email: req.body.email}).exec(function (err, user) {
             if (err) 
                 throw err;
             if (!user) {
-                return res.json({state: false, status:422, details: 'Authentication failed.', title:'Authentication failed', type:'Authentication Error.'});
+                return res.status(422).json({state: false, details: 'Authentication failed.', title:'Authentication failed', type:'Authentication Error.'});
             } else {
                 var token = jwt.sign({"user": user}, process.env.SECRET, {expiresIn: 60*60*24});
                 return res.json({
@@ -57,7 +57,6 @@ module.exports = {
         var errors = req.validationErrors();
         if (errors) {
             res.status(422).json({
-                status:422,
                 title:'Validation Error',
                 details:errors,
                 type:'Validation Error'
@@ -69,7 +68,7 @@ module.exports = {
         signupAttributes = {
             email: req.body.email,
             password: req.body.password,
-            fullName: req.params.fullName.charAt(0).toUpperCase() + req.params.fullName.slice(1),
+            fullName: req.body.fullName.charAt(0).toUpperCase() + req.body.fullName.slice(1),
             mobile: req.body.mobile,
             address:req.body.address,
             dateBfBirth: req.body.dateOfBirth,
@@ -93,7 +92,7 @@ module.exports = {
                 var message = err
                 if(err.code == 11000)
                     message = "This email is registered with another account!"
-                res.json({status:422,title:'Validation Error',type:"duplicate Field", details:message});
+                res.status(422).json({title:'Validation Error',type:"duplicate Field", details:message});
                 return;
             }
 
@@ -129,7 +128,6 @@ module.exports = {
         var errors = req.validationErrors();
         if (errors) {
             res.status(422).json({
-                status:422,
                 title:'input validation',
                 type:'Validation error',
                 details: errors
@@ -163,7 +161,7 @@ module.exports = {
                 var message = err
                 if(err.code == 11000)
                     message = "This email is registered with another account!"
-                res.json({status:500,title:'Server Error', type:"duplicate field", details: message});
+                res.status(500).json({title:'Server Error', type:"duplicate field", details: message});
                 return;
             }
 
@@ -171,11 +169,11 @@ module.exports = {
                 newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
                     newUser.image = image_path;
                     newUser.save();
-                    res.json({ status: 204, body:newUser});
+                    res.json({status: 204, body:newUser});
                 });
             }
             else{
-                res.json({ status: 204, data:newUser});
+                res.json({status: 204, data:newUser});
             }
         });
     },
@@ -183,9 +181,9 @@ module.exports = {
         console.log('req.params',req.params);
         User.findOne({_id: req.params.id}).populate('user').exec(function (err, user) {
             if (err){
-                res.json({status:500, title:'Server Error',type:"Server Error", details:err})
+                res.status(500).json({title:'Server Error',type:"Server Error", details:err})
             }else{
-                res.json({  status: 204, data: user})
+                res.json({status: 204, data: user})
             }
         });  
     },
@@ -193,7 +191,7 @@ module.exports = {
         const FullName = req.params.name.charAt(0).toUpperCase() + req.params.name.slice(1).toLowerCase();
         User.find({fullName: FullName, groupId:parseInt( req.params.groupId)}).exec(function (err, users) {
             if (err)
-            res.json({status:500,  title:'Server Error', type:"Server Error", details:err});
+            res.status(500).json({title:'Server Error', type:"Server Error", details:err});
             else{
                 res.json({ status: 204, data: users})
             }
@@ -202,14 +200,13 @@ module.exports = {
     get_group_users:function(req,res){
         User.find({groupId: parseInt(req.params.groupId)}).exec(function(err, users){
             if (err) {
-                res.json({  
-                status:422,
+                res.status(422).json({  
                 type:"No Items",
                 title:"No Item Found",
                 details: 'this groups hasn\'nt any member yet!'
             });
             } else {
-                res.json({ status: 204, data: users, message: 'all users!'});
+                res.json({status: 204, data: users, message: 'all users!'});
             }
         })
     }

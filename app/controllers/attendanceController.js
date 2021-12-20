@@ -26,12 +26,11 @@ module.exports = {
                 }},{$set: updated_attendance },{new: true},function(err,attendance){
                     if (err) {
                         var message = err
-                        res.json({status: 422, title: message, type:"Error",details:message});
+                        res.status(422).json({title: message, type:"Error",details:message});
                         return;
                     }
                     res.json({
                         state:true,
-                        status: 204,
                         data: attendance, 
                         message: 'attendance is updated successfully'
                     });     
@@ -48,12 +47,11 @@ module.exports = {
                 newAttendanceRecord.save(function (err) {
                     if (err) {
                         var message = err
-                        res.json({status: 422, title: message, type:"Error",details:message});
+                        res.status(422).json({title: message, type:"Error",details:message});
                         return;
                     }
                     res.json({
                         state:true,
-                        status: 204,
                         data: newAttendanceRecord, 
                         message: 'attendance is created successfully'
                     });
@@ -70,9 +68,9 @@ module.exports = {
                 $lt: new Date(tomorrow)
         }}).exec(function(err, attendances){
             if (err) {
-                res.json({status: 422, title: 'no groups created yet!', type:'Server Error', details:err});
+                res.status(422).json({title: 'no groups created yet!', type:'Server Error', details:err});
             } else {
-                res.json({state:true, status: 204, data: attendances, message: 'all groups!'});
+                res.json({state:true, data: attendances, message: 'all groups!'});
             }
         });
     }    

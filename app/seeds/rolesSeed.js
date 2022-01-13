@@ -1,5 +1,5 @@
 /* mySeedScript.js */
-
+//run it :  node app/seeds/rolesSeed.js 
 // require the necessary libraries
 const MongoClient = require("mongodb").MongoClient;
 
@@ -24,15 +24,15 @@ async function seedDB() {
 
         // make a bunch of time series data
         let rolesData = [
-            {id:1, name:"admin" ,code:1000}, 
-            {id:2, name:"first prep saturday" ,code:1001},
-            {id:3, name:"second prep saturday" ,code:1002},
-            {id:4, name:"first primary sunday" ,code:1003},
-            {id:5, name:"secound primary sunday" ,code:1004},
-            {id:6, name:"secondry monday" ,code:1005},
-            {id:7, name:"youth tuesday" ,code:1006},
-            {id:8, name:"youth wednesday" ,code:1007},
-            {id:9, name:"kids wednesday" ,code:1008}
+            {index:1, name:"admin" ,code:1000}, 
+            {index:2, name:"first prep saturday" ,code:1001},
+            {index:3, name:"second prep saturday" ,code:1002},
+            {index:4, name:"first primary sunday" ,code:1003},
+            {index:5, name:"secound primary sunday" ,code:1004},
+            {index:6, name:"secondry monday" ,code:1005},
+            {index:7, name:"youth tuesday" ,code:1006},
+            {index:8, name:"youth wednesday" ,code:1007},
+            {index:9, name:"kids wednesday" ,code:1008}
         ];
         collection.insertMany(rolesData);
 

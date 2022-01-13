@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 // var crypto = require('crypto');
 // var ejs = require('ejs');
 var User = require('../models/user');
+var Role = require('../models/role');
 // const sendmail = require('sendmail')();
 
 
@@ -22,7 +23,7 @@ module.exports = {
             res.status(422).json({title:'Validation Error', type:'Validation Error',details: 'Please enter correct email and password'});
             return;
         }
-        User.findOne({email: req.body.email}).exec(function (err, user) {
+        User.findOne({email: req.body.email}).populate('roleId').exec(function (err, user) {
             if (err) 
                 throw err;
             if (!user) {
@@ -63,50 +64,58 @@ module.exports = {
             });
             return;
         }
+
+        Role.findOne({index:req.body.roleId}).exec((error,role)=>{
+            if (error){
+                res.status(500).json({title:'Server Error',type:"Server Error", details:error})
+            }else{
+                console.log('roleee after find',role)
+                var signupAttributes;
+                signupAttributes = {
+                    email: req.body.email,
+                    password: req.body.password,
+                    fullName: req.body.fullName.charAt(0).toUpperCase() + req.body.fullName.slice(1),
+                    mobile: req.body.mobile,
+                    address:req.body.address,
+                    dateBfBirth: req.body.dateOfBirth,
+                    image: req.body.image,
+                    note: req.body.note,
+                    confessionPriest: req.body.confessionPriest,
+                    church: req.body.church,
+                    fatherMobileNumber :req.body.fatherMobileNumber,
+                    motherMobileNumber :req.body.motherMobileNumber,
+                    fatherConfessionPriest: req.body.fatherConfessionPriest,
+                    motherConfessionPriest:req.body.motherConfessionPriest,
+                    roleId:role,
+                    fatherJob: req.body.fatherJob,
+                    motherJob: req.body.motherJob,
+                };
+                var newUser = new User(signupAttributes);
         
-        var signupAttributes;
-        signupAttributes = {
-            email: req.body.email,
-            password: req.body.password,
-            fullName: req.body.fullName.charAt(0).toUpperCase() + req.body.fullName.slice(1),
-            mobile: req.body.mobile,
-            address:req.body.address,
-            dateBfBirth: req.body.dateOfBirth,
-            image: req.body.image,
-            note: req.body.note,
-            confessionPriest: req.body.confessionPriest,
-            church: req.body.church,
-            fatherMobileNumber :req.body.fatherMobileNumber,
-            motherMobileNumber :req.body.motherMobileNumber,
-            fatherConfessionPriest: req.body.fatherConfessionPriest,
-            motherConfessionPriest:req.body.motherConfessionPriest,
-            fatherJob: req.body.fatherJob,
-            motherJob: req.body.motherJob,
-        };
-        var newUser = new User(signupAttributes);
-
-        var token = jwt.sign({"user": newUser}, process.env.SECRET, {expiresIn: 60*60*24});
-        newUser.token = token;
-        newUser.save(function (err) {
-            if (err) {
-                var message = err
-                if(err.code == 11000)
-                    message = "This email is registered with another account!"
-                res.status(422).json({title:'Validation Error',type:"duplicate Field", details:message});
-                return;
-            }
-
-            if (req.body.file_bytes) {
-                newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
-                    newUser.image = image_path;
-                    newUser.save();
-                    res.json({  status: 204, title: 'User Added', data:newUser, token:token});
+                var token = jwt.sign({"user": newUser}, process.env.SECRET, {expiresIn: 60*60*24});
+                newUser.token = token;
+                newUser.save(function (err) {
+                    if (err) {
+                        var message = err
+                        if(err.code == 11000)
+                            message = "This email is registered with another account!"
+                        res.status(422).json({title:'Validation Error',type:"duplicate Field", details:message});
+                        return;
+                    }
+        
+                    if (req.body.file_bytes) {
+                        newUser.saveImage(req.body.file_bytes,req.body.file_name, newUser.email, function(image_path){
+                            newUser.image = image_path;
+                            newUser.save();
+                            res.json({  status: 204, title: 'User Added', data:newUser, token:token});
+                        });
+                    }
+                    else{
+                        res.json({  status: 204, data:{ data:newUser}});
+                    }
                 });
             }
-            else{
-                res.json({  status: 204, data:{ data:newUser}});
-            }
-        });
+        }) 
     },
     add_user: function (req, res) {     
         //validating password

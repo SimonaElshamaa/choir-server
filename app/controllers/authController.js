@@ -69,7 +69,6 @@ module.exports = {
             if (error){
                 res.status(500).json({title:'Server Error',type:"Server Error", details:error})
             }else{
-                console.log('roleee after find',role)
                 var signupAttributes;
                 signupAttributes = {
                     email: req.body.email,
@@ -187,7 +186,6 @@ module.exports = {
         });
     },
     get_user:function(req,res){
-        console.log('req.params',req.params);
         User.findOne({_id: req.params.id}).populate('user').exec(function (err, user) {
             if (err){
                 res.status(500).json({title:'Server Error',type:"Server Error", details:err})
@@ -218,5 +216,15 @@ module.exports = {
                 res.json({status: 204, data: users, message: 'all users!'});
             }
         })
+    },
+    get_me:function(req, res){
+        // res.json({status: 204, data: req.decoded.user});
+        User.findOne({_id: req.decoded.user._id}).populate('roleId').exec(function (err, user) {
+            if (err){
+                res.status(500).json({title:'Server Error',type:"Server Error", details:err})
+            }else{
+                res.json({status: 204, data: user})
+            }
+        });
     }
 }

@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken');
 
 //verify token middleware
 module.exports = function(req, res, next) {
-	var token = req.body.token || req.query.token || req.headers['token'];
+	var token = req.body.authorization || req.query.authorization || req.headers['authorization'];
 	if (token) {
 		jwt.verify(token, process.env.SECRET, function(err, decoded) {
 			if (err) {

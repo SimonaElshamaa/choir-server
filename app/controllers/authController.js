@@ -52,8 +52,9 @@ module.exports = {
         req.checkBody('password', 'Password is required').notEmpty();
         req.sanitizeBody('password').escape();
         req.sanitizeBody('password').trim();
-        
-        
+
+        req.checkBody('roleId', 'role is required').notEmpty();  
+        req.checkBody('groupId', 'group is required').notEmpty();        
 
         var errors = req.validationErrors();
         if (errors) {
@@ -81,6 +82,7 @@ module.exports = {
                     note: req.body.note,
                     confessionPriest: req.body.confessionPriest,
                     church: req.body.church,
+                    groupId: req.body.groupId,
                     fatherMobileNumber :req.body.fatherMobileNumber,
                     motherMobileNumber :req.body.motherMobileNumber,
                     fatherConfessionPriest: req.body.fatherConfessionPriest,

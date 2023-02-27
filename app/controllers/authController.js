@@ -44,8 +44,7 @@ module.exports = {
     register: function (req, res) {     
         //validating password
         //validating email
-        res.json({  status: 204, title: 'User Added', data:{}, token:"token"});
-
+        
         req.checkBody('email', 'Email is required').notEmpty();
 
         req.sanitizeBody('name').escape();

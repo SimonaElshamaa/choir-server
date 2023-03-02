@@ -10,7 +10,7 @@ dotenv.config();
 
 var bodyParser = require('body-parser');
 
-const isDev = process.env.NODE_ENV !== 'production';
+// const isDev = process.env.NODE_ENV !== 'production';
 const app = express();
 const cors = require('cors');
 var corsOptions = {
@@ -20,7 +20,11 @@ var corsOptions = {
 }
 
 app.use(cors(corsOptions));
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://www.dhattendance.com"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 //configuring body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

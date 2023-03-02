@@ -13,8 +13,13 @@ var bodyParser = require('body-parser');
 const isDev = process.env.NODE_ENV !== 'production';
 const app = express();
 const cors = require('cors');
-app.use(cors({origin : "http://165.227.168.9:4000"}));
+var corsOptions = {
+  origin: 'http://165.227.168.9:4000',
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: "GET, PUT, POST" // add per need
+}
 
+app.use(cors(corsOptions));
 
 //configuring body-parser
 app.use(bodyParser.json());

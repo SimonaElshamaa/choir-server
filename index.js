@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 const isDev = process.env.NODE_ENV !== 'production';
 const app = express();
 const cors = require('cors');
-app.use(cors());
+app.use(cors({origin : "www.dhattendance.com"}));
 
 
 //configuring body-parser
@@ -29,7 +29,7 @@ require('./config/db');
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = process.env.HOST;
 const host = customHost || null; // Let http.Server use its default IPv6/4 host
-const prettyHost = customHost || 'localhost';
+const prettyHost = customHost || '127.0.0.1';
 
 // use the gzipped bundle
 app.get('*.js', (req, res, next) => {

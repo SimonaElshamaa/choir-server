@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 const isDev = process.env.NODE_ENV !== 'production';
 const app = express();
 const cors = require('cors');
-app.use(cors({origin : "www.dhattendance.com"}));
+app.use(cors({origin : "http://165.227.168.9:4000"}));
 
 
 //configuring body-parser

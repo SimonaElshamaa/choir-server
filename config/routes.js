@@ -22,6 +22,7 @@ module.exports = function (app) {
 	*     app.get('/api_url', protectAPI, controller.method);
 	*  except auth and register
 	*/
+	console.log('at routesssss');
 	app.post('/users/auth', authController.auth);
 	app.post('/users/register', authController.register);
 	app.get('/users/get_user/:id', protectAPI, authController.get_user);

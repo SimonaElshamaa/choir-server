@@ -1,16 +1,24 @@
 module.exports = {
-    customValidators: {
-        /* validator to check if the given value is an array */
-        isArray: function (value) {
-            return Array.isArray(value);
-        },
-        /* validator to check if the given value is alphabitics or spaces */
-        isAlphaS: function (value) {
-            return value.match(/[a-z]| /i);
-        },
-        /* validator to check if the given value is alphanumeric or spaces */
-        isAlphanumericS: function (value) {
-            return value.match(/[a-z]|[0-9]| /i);
-        }
-    }
+  customValidators: {
+    /**
+     * Check if the given value is an array
+     * @param {any} value
+     * @returns {boolean}
+     */
+    isArray: (value) => Array.isArray(value),
+
+    /**
+     * Check if the given value contains only alphabetic characters or spaces
+     * @param {string} value
+     * @returns {boolean}
+     */
+    isAlphaS: (value) => /^[a-zA-Z\s]+$/.test(value),
+
+    /**
+     * Check if the given value contains only alphanumeric characters or spaces
+     * @param {string} value
+     * @returns {boolean}
+     */
+    isAlphanumericS: (value) => /^[a-zA-Z0-9\s]+$/.test(value)
+  }
 };

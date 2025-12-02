@@ -1,20 +1,17 @@
-var mongoose = require('mongoose');
-var timestamps = require('goodeggs-mongoose-timestamps');
-// var fs = require('fs');
-var schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const timestamps = require('goodeggs-mongoose-timestamps');
 
-var attendenceSchema = new schema({
-    id: {type: String},
-    date:Date,
-    userId:{ type: schema.Types.ObjectId, ref: 'user' },
-    groupId:{ type: Number },
-    attend:{type: Boolean},
-    note :{type:String},
-    created_at: Date,
-    updated_at: Date
+const { Schema } = mongoose;
+
+const attendanceSchema = new Schema({
+  date: { type: Date, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
+  groupId: { type: Number, required: true },
+  attend: { type: Boolean, default: false },
+  note: { type: String, default: '' }
 });
 
+// Automatically add createdAt and updatedAt
+attendanceSchema.plugin(timestamps);
 
-attendenceSchema.plugin(timestamps);
-
-module.exports = mongoose.model('attendence', attendenceSchema);
+module.exports = mongoose.model('attendance', attendanceSchema);

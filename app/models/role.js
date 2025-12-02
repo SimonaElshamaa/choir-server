@@ -1,14 +1,17 @@
-var mongoose = require('mongoose');
-var timestamps = require('goodeggs-mongoose-timestamps');
-// var fs = require('fs');
-var schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const timestamps = require('goodeggs-mongoose-timestamps');
 
-var roleSchema = new schema({
-    id: {type: String},
-    name:{type:String}
+const { Schema } = mongoose;
+
+const roleSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  }
 });
 
-
+// Automatically add createdAt and updatedAt
 roleSchema.plugin(timestamps);
 
 module.exports = mongoose.model('role', roleSchema);

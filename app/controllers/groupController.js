@@ -1,42 +1,33 @@
-var Group = require('../models/group');
+const Group = require('../models/group');
 
 module.exports = {
 
-	add_group: function (req, res) {
-        Group.countDocuments({}, function(err, count) {
-            if (err) {
-                var message = err
-                res.status(400).json({state:false, message: message});
-                return;
-            }
-            var counter = ++count;
-            var groupAttributes;
-            
-            groupAttributes = {
-                Identifier :counter,
-                name: req.body.name
-            };
-            
-            var newGroup = new Group(groupAttributes);
+  add_group: async (req, res) => {
+    try {
+      const count = await Group.countDocuments({}).exec();
+      const counter = count + 1;
 
-            newGroup.save(function (err) {
-                if (err) {
-                    var message = err
-                    res.status(422).json({title:'Server Error', type:'Server Error', message: message});
-                    return;
-                }
-                res.json({state:true, message: 'Group Added', data:newGroup});
-            });		
-        });
-    },
-    
-    get_groups: function(req, res){
-        Group.find().exec(function(err, groups){
-            if (err) {
-                res.status(422).json({title:'Server Error', type:'Server Error', message: err});
-            } else {
-                res.json({state:true, data: groups, message: 'all groups!'});
-            }
-        });
-    }    
-}
+      const newGroup = new Group({
+        Identifier: counter,
+        name: req.body.name
+      });
+
+      await newGroup.save();
+
+      res.json({ state: true, message: 'Group Added', data: newGroup });
+
+    } catch (err) {
+      res.status(422).json({ title: 'Server Error', type: 'Server Error', message: err.message || err });
+    }
+  },
+
+  get_groups: async (req, res) => {
+    try {
+      const groups = await Group.find().exec();
+      res.json({ state: true, data: groups, message: 'All groups!' });
+    } catch (err) {
+      res.status(422).json({ title: 'Server Error', type: 'Server Error', message: err.message || err });
+    }
+  }
+
+};

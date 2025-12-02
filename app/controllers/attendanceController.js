@@ -1,77 +1,75 @@
-var Attendence = require('../models/attendence');
+const Attendance = require('../models/attendence');
 
 module.exports = {
 
-	add_attendance: function (req, res) {
-        const date = new Date(req.body.date);
+  add_attendance: async (req, res) => {
+    try {
+      const date = new Date(req.body.date);
+      const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const tomorrow = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
-        const today = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-        const tomorrow = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+(date.getDate()+1);
-        Attendence.findOne({
-            userId:req.body.userId,
-            groupId:req.body.groupId, date:{
-                $gte: new Date(today), 
-                $lt: new Date(tomorrow)
-        }}).exec(function(err, attendance){
-            const updated_attendance={
-                attend:req.body.attend,
-                note: req.body.note,
-            };
-            if(attendance){
-                Attendence.findOneAndUpdate({
-                    userId:req.body.userId,
-                    groupId:req.body.groupId, date:{
-                        $gte: new Date(today), 
-                        $lt: new Date(tomorrow)
-                }},{$set: updated_attendance },{new: true},function(err,attendance){
-                    if (err) {
-                        var message = err
-                        res.status(422).json({title: message, type:"Error",details:message});
-                        return;
-                    }
-                    res.json({
-                        state:true,
-                        data: attendance, 
-                        message: 'attendance is updated successfully'
-                    });     
-                })
-            }else{
-                var new_attendance = {
-                    date:new Date(req.body.date),
-                    userId:req.body.userId,
-                    groupId:req.body.groupId,
-                    attend:req.body.attend,
-                    note: req.body.note
-                };
-                var newAttendanceRecord = new Attendence(new_attendance);
-                newAttendanceRecord.save(function (err) {
-                    if (err) {
-                        var message = err
-                        res.status(422).json({title: message, type:"Error",details:message});
-                        return;
-                    }
-                    res.json({
-                        state:true,
-                        data: newAttendanceRecord, 
-                        message: 'attendance is created successfully'
-                    });
-                }); 
-            }
-        });    		
-    },
-    get_group_attendance_by_date: function(req, res){
-        const groupId = req.params.groupId;
-        const today = req.params.today;
-        const tomorrow = req.params.tomorrow;
-        Attendence.find({groupId:groupId, date:{
-                $gte: new Date(today), 
-                $lt: new Date(tomorrow)
-        }}).exec(function(err, attendances){
-            if (err) {
-                res.status(422).json({title: 'no groups created yet!', type:'Server Error', details:err});
-            } else {
-                res.json({state:true, data: attendances, message: 'all groups!'});
-            }
+      const attendance = await Attendance.findOne({
+        userId: req.body.userId,
+        groupId: req.body.groupId,
+        date: { $gte: today, $lt: tomorrow }
+      }).exec();
+
+      const updatedAttendance = {
+        attend: req.body.attend,
+        note: req.body.note
+      };
+
+      if (attendance) {
+        const updated = await Attendance.findOneAndUpdate(
+          { userId: req.body.userId, groupId: req.body.groupId, date: { $gte: today, $lt: tomorrow } },
+          { $set: updatedAttendance },
+          { new: true }
+        ).exec();
+
+        return res.json({
+          state: true,
+          data: updated,
+          message: 'Attendance is updated successfully'
         });
-    }    
-}
+      } else {
+        const newAttendance = new Attendance({
+          date: new Date(req.body.date),
+          userId: req.body.userId,
+          groupId: req.body.groupId,
+          attend: req.body.attend,
+          note: req.body.note
+        });
+
+        await newAttendance.save();
+
+        return res.json({
+          state: true,
+          data: newAttendance,
+          message: 'Attendance is created successfully'
+        });
+      }
+
+    } catch (err) {
+      res.status(422).json({ title: 'Error', type: "Error", details: err.message || err });
+    }
+  },
+
+  get_group_attendance_by_date: async (req, res) => {
+    try {
+      const groupId = req.params.groupId;
+      const today = new Date(req.params.today);
+      const tomorrow = new Date(req.params.tomorrow);
+
+      const attendances = await Attendance.find({
+        groupId,
+        date: { $gte: today, $lt: tomorrow }
+      }).exec();
+
+      res.json({ state: true, data: attendances, message: 'All attendances!' });
+
+    } catch (err) {
+      res.status(422).json({ title: 'Error', type: 'Server Error', details: err.message || err });
+    }
+  }
+
+};

@@ -2,7 +2,6 @@
 
 const express = require('express');
 const logger = require('./logger');
-
 const argv = require('./argv');
 const port = require('./port');
 const dotenv = require('dotenv');
@@ -10,7 +9,7 @@ dotenv.config();
 
 var bodyParser = require('body-parser');
 
-// const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV !== 'production';
 const app = express();
 const cors = require('cors');
 app.use(cors());

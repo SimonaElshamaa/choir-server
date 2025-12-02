@@ -1,79 +1,59 @@
-var mongoose = require('mongoose');
-var timestamps = require('goodeggs-mongoose-timestamps');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const timestamps = require('goodeggs-mongoose-timestamps');
+
 const SALT_WORK_FACTOR = 10;
-// var fs = require('fs');
-var schema = mongoose.Schema;
+const { Schema } = mongoose;
 
-var userSchema = new schema({
-    id: {type: String},
-	email: {
-        type: String,
-        required: true,
-        index: true,
-        unique: true
-    },
-    password:{type: String},
-    fullName: {type: String},
-    address: {type: String},
-    mobile:{type: Number},
-    dateOfBirth: Date,
-    image: {type: String},
-    note: {type: String},
-    confessionPriest: {type: String},
-    church: {type: String},
-    fatherMobileNumber :{type: Number},
-    motherMobileNumber :{type: Number},
-    fatherConfessionPriest: {type: String},
-    motherConfessionPriest: {type: String},
-    fatherJob: {type: String},
-    motherJob: {type: String},
-    sisters:[{
-        name:{type: String},
-        age:{type:Number}
-    }],
-    brothers:[{
-        name:{type: String},
-        age:{type:Number}
-    }],
-    groupId: { type: Number },
-    roleId: {type: mongoose.Schema.Types.ObjectId,ref: 'role'},
-    createdAt: Date,
-    updatedAt: Date,
+const userSchema = new Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true,
+    trim: true
+  },
+  password: { type: String, required: true },
+  fullName: { type: String, trim: true, required: true },
+  address: { type: String, trim: true },
+  mobile: { type: Number },
+  dateOfBirth: { type: Date },
+  image: { type: String },
+  note: { type: String },
+  confessionPriest: { type: String },
+  church: { type: String },
+  fatherMobileNumber: { type: Number },
+  motherMobileNumber: { type: Number },
+  fatherConfessionPriest: { type: String },
+  motherConfessionPriest: { type: String },
+  fatherJob: { type: String },
+  motherJob: { type: String },
+  sisters: [{
+    name: { type: String, trim: true },
+    age: { type: Number }
+  }],
+  brothers: [{
+    name: { type: String, trim: true },
+    age: { type: Number }
+  }],
+  groupId: { type: Number },
+  roleId: { type: Schema.Types.ObjectId, ref: 'role', required: true }
 });
 
+// Hash password before saving
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
 
-userSchema.pre('save', function (next) {
-    var user = this;
-	// only hash the password if it has been modified (or is new)
-    if (!user.isModified('password'))
-        return next();
-    // generate a salt
-    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-        if (err)
-            return next(err);
-        // hash the password using our new salt
-        bcrypt.hash(user.password, salt, function (err, hash) {
-            if (err)
-                return next(err);
-
-            // override the cleartext password with the hashed one
-            user.password = hash;
-            next();
-        });
-    });
+  const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
-
-
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-        if (err)
-            return cb(err);
-        cb(null, isMatch);
-    });
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Add createdAt and updatedAt automatically
 userSchema.plugin(timestamps);
 
 module.exports = mongoose.model('user', userSchema);

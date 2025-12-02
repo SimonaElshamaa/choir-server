@@ -2,36 +2,44 @@
 var mongoose = require('mongoose');
 
 //require chalk module to give colors to console text
-var chalk = require('chalk');
+const mongoose = require('mongoose');
+const chalk = require('chalk');
 
-//require database URL from properties file
-// var dbURL = process.env.DB_CONNECTION_STRING;
-var dbURL='mongodb://localhost:27017/choir'
+// Database URL (use env variable if available)
+const dbURL = process.env.DB_CONNECTION_STRING || 'mongodb://localhost:27017/choir';
 
-var connected = chalk.bold.cyan;
-var error = chalk.bold.yellow;
-var disconnected = chalk.bold.red;
-var termination = chalk.bold.magenta;
+const connected = chalk.bold.cyan;
+const error = chalk.bold.yellow;
+const disconnected = chalk.bold.red;
+const termination = chalk.bold.magenta;
 
+// Avoid deprecation warnings
+mongoose.set('strictQuery', true);
 
-    mongoose.connect(dbURL, { useNewUrlParser: true });
-
-
-    mongoose.connection.on('connected', function(){
-        console.log(connected("Mongoose default connection is open to ", dbURL));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(dbURL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     });
+    console.log(connected(`Mongoose default connection is open to ${dbURL}`));
+  } catch (err) {
+    console.log(error(`Mongoose default connection has occurred ${err} error`));
+    process.exit(1);
+  }
+};
 
-    mongoose.connection.on('error', function(err){
-        console.log(error("Mongoose default connection has occured "+err+" error"));
-    });
+// Connection events
+mongoose.connection.on('disconnected', () => {
+  console.log(disconnected("Mongoose default connection is disconnected"));
+});
 
-    mongoose.connection.on('disconnected', function(){
-        console.log(disconnected("Mongoose default connection is disconnected"));
-    });
+// Handle app termination
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log(termination("Mongoose default connection is disconnected due to application termination"));
+  process.exit(0);
+});
 
-    process.on('SIGINT', function(){
-        mongoose.connection.close(function(){
-            console.log(termination("Mongoose default connection is disconnected due to application termination"));
-            process.exit(0)
-        });
-    });
+module.exports = connectDB;
+
